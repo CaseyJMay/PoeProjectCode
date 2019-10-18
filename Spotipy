@@ -1,0 +1,19 @@
+import spotipy
+import spotipy.util as util
+import sys
+from spotipy.oauth2 import SpotifyClientCredentials
+
+export SPOTIPY_CLIENT_ID ='aa68cd63fc8f4e7dab614bbf91008b23'
+export SPOTIPY_CLIENT_SECRET ='bf148999956d428eb0af2a93d60d132f'
+export SPOTIPY_REDIRECT_URI ='https://www.google.com'
+
+scope = 'user-library-read'
+username = 'thranxar'
+
+client_credentials_manager = SpotifyClientCredentials('aa68cd63fc8f4e7dab614bbf91008b23','bf148999956d428eb0af2a93d60d132f')
+sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+
+
+token = util.prompt_for_user_token(username,scope)
+audio = spotify.audio_features(tracks=['spotify:track:0Cu7L0D7greeQXP6mFGuYP'])
+print(audio)

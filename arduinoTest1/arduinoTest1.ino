@@ -7,21 +7,21 @@ void setup() {
 }
 
 void loop() {
-  if (Serial.available() > 0) {
+  while (Serial.available() > 0) {
     data = Serial.readString().toInt();
     
     if (data == 1) {
-      Serial.println(data);
+      Serial.print("LED On");
       digitalWrite(LED_BUILTIN, HIGH);
       delay(1000);
     }
-    if (data == 0) {
-      Serial.println(data);
+    else if (data == 0) {
+      Serial.print("LED Off");
       digitalWrite(LED_BUILTIN, LOW);
       delay(1000); 
     }
-  }
-  else {
-    digitalWrite(LED_BUILTIN, LOW);
+    else {
+      digitalWrite(LED_BUILTIN, LOW);
     }
+  }
 }

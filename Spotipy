@@ -2,31 +2,47 @@ import spotipy
 import spotipy.util as util
 import sys
 from spotipy.oauth2 import SpotifyClientCredentials
-
+from time import sleep
+import time
 # export SPOTIPY_CLIENT_ID='aa68cd63fc8f4e7dab614bbf91008b23'
 # export SPOTIPY_CLIENT_SECRET='bf148999956d428eb0af2a93d60d132f'
 # export SPOTIPY_REDIRECT_URI='http://localhost/'
-scope = 'user-read-currently-playing'
+scope = scope = 'user-library-read'
 username = 'thranxar'
 
 #util.prompt_for_user_token(username,scope,client_id=' aa68cd63fc8f4e7dab614bbf91008b23',client_secret='bf148999956d428eb0af2a93d60d132f',redirect_uri='https://github.com/CaseyJMay')
 token = util.prompt_for_user_token(username, scope)
+last_track_uri = ''
+while 1:
+    while 1:
+        if token:
+            sp = spotipy.Spotify(auth=token)
+            current_track = sp.currently_playing(market=None)
+            current_track_uri = current_track['item']['uri']
+            if current_track_uri != last_track_uri:
+                print(current_track_uri + "and" + last_track_uri)
+                last_track_uri = current_track_uri
+                break
+    if token:
+        sp = spotipy.Spotify(auth=token)
+        results = sp.audio_analysis(current_track_uri)
+        print(results['beats'][0:2])
+        # print(results['track']['tempo'])
+        tempo = results['track']['tempo']
+        # while 1:
+        #     print('beat')
+        #     sleep(60/int(tempo))
 
-if token:
-    sp = spotipy.Spotify(auth=token)
-    current_track = sp.currently_playing(market=None)
-    current_track_uri = current_track['item']['uri']
-else:
-    print("Can't get token for" + username)
+    else:
+        print("Can't get token for" + username)
 
-
-scope = 'user-library-read'
-token = util.prompt_for_user_token(username, scope)
-
-if token:
-    sp = spotipy.Spotify(auth=token)
-    scope = 'user-library-read'
-    results = sp.audio_analysis(current_track_uri)
-    print(results)
-else:
-    print("Can't get token for" + username)
+    notes = results['beats']
+    t = time.time()
+    # do stuff
+    for i in notes:
+        print('start')
+        while 1:
+            elapsed = time.time() - t
+            if elapsed > int(i['start']) + int(i['duration']):
+                print('end')
+                break

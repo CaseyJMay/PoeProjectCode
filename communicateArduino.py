@@ -6,29 +6,46 @@ def start_serial(com,baud):
     serialPort = serial.Serial(com, baud, timeout=1)
     return serialPort
 
-def control_LED():
+def control_motor():
     arduino = start_serial("COM5", 9600)
 
     while True:
-        # data = arduino.readline().decode("latin-1") 
-        print("---")
+        # print("---")
+        # data = arduino.readline().decode().strip("\r\n")
         data = arduino.readline().decode().strip("\r\n")
         # print(data)
         # print("Enter: ")
         # var = input()
-        # if var == "1":
-        try:
-            if int(data) >= 500:
-                # print("SUCCESS")
-                print(data)
-                arduino.write("1".encode())
-            # elif var == "0":
-            elif int(data) < 500: 
-                # print("SUCCESS")
-                print(data)
-                arduino.write("0".encode())
-        except ValueError:
-            print("FAIL")
-            pass
+        print(data)
+        # arduino.write("h".encode())
 
-control_LED()
+
+        # for i in range(10):
+            # if i%2 == 0:
+            #     string = "\n1,2\n"
+            #     arduino.write(string.encode())
+            # if i%2 == 1:
+            #     string = "\n3,4\n"
+            #     arduino.write(string.encode())
+
+        string = "1.1,2.2\0"
+        arduino.write(string.encode())
+        string = "3,4\0"
+        arduino.write(string.encode())
+
+        # arduino.write(string.encode())
+        # arduino.write("ih".encode())
+        # try:
+        #     if int(data) >= 450:
+        #         # print("SUCCESS")
+        #         print(data)
+        #         arduino.write("274.6, 87.8, 58.0, 44.1, 46.7".encode())
+        #     elif int(data) < 450: 
+        #         # print("SUCCESS")
+        #         print(data)
+        #         arduino.write("274.6, 87.8, 58.0, 44.1, 46.7".encode())
+        # except ValueError:
+        #     print("FAIL")
+        #     pass
+
+control_motor()

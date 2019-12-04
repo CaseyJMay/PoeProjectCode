@@ -14,8 +14,8 @@ def control_motor():
         # data = arduino.readline().decode().strip("\r\n")
         data = arduino.readline().decode().strip("\r\n")
         # print(data)
-        # print("Enter: ")
-        # var = input()
+        print("Enter: ")
+        var = input()
         print(data)
         # arduino.write("h".encode())
 
@@ -28,10 +28,10 @@ def control_motor():
             #     string = "\n3,4\n"
             #     arduino.write(string.encode())
 
-        string = "1.1,2.2\0"
-        arduino.write(string.encode())
-        string = "3,4\0"
-        arduino.write(string.encode())
+        # string = "1.1,2.2\0"
+        arduino.write(var.encode())
+        # string = "3,4\0"
+        # arduino.write(string.encode())
 
         # arduino.write(string.encode())
         # arduino.write("ih".encode())

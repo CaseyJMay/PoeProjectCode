@@ -1,3 +1,20 @@
+# dictionary_set = [{"a":100, "b":20, "c":30},{}]
+# max_val = max(dictionary_set[0], key=dictionary_set[0].get)
+# print(dictionary_set[0][max_val])
+# print(max_val)
+
+# counter = 0
+# while True:
+#     if counter < 3:
+#         print(counter)
+#         counter += 1
+#     elif counter >= 3 and counter < 5: 
+#         print(counter)
+#         counter += 1
+
+###########################################
+### THIS IS FOR SPRINT 3 - TWO CHANNELS ###
+###########################################
 import serial
 import time
 
@@ -9,10 +26,7 @@ def start_serial(com,baud):
 def init_dict():
     dict1 = {}
     dict2 = {}
-    dict3 = {}
-    dict4 = {}
-    dict5 = {}
-    all_dict = [dict1, dict2, dict3, dict4, dict5]
+    all_dict = [dict1, dict2]
     return all_dict
 
 def clear_dict(all_dict):
@@ -62,6 +76,7 @@ def receive_fft_info():
                     print("==========================================")
                     data = arduino.readline().decode('utf-8').strip()
 
+                # print(data)
                 freq_amp_pair = data.split(",")
                 freq = freq_amp_pair[0]
                 amp = freq_amp_pair[1]
@@ -71,8 +86,8 @@ def receive_fft_info():
 
                 ## there are 64 freq,amp pairs each timestamp
                 ## the first four dictionaries contain 13 freq,amp pairs
-                if dict_counter < 4:
-                    if len(dictionary_set[dict_counter]) == 13:
+                if dict_counter < 3:
+                    if len(dictionary_set[dict_counter]) == 32:
                         freq_with_max_amp = max(dictionary_set[dict_counter], key=dictionary_set[dict_counter].get)
                         ## get the second max amplitude if the amplitude > 1000 (happens at very low freq)
                         if dictionary_set[dict_counter][freq_with_max_amp] > 1000:
@@ -81,23 +96,19 @@ def receive_fft_info():
                         amp_list.append(dictionary_set[dict_counter][freq_with_max_amp])
                         # print(amp_list)
                         dict_counter += 1
-                
-                ## the last dictionaries contain 12 freq,amp pairs
-                elif dict_counter == 4: 
-                    if len(dictionary_set[dict_counter]) == 12:
-                        freq_with_max_amp = max(dictionary_set[dict_counter], key=dictionary_set[dict_counter].get)
-                        ## get the second max amplitude if the amplitude > 1000 (happens at the very end)
-                        if dictionary_set[dict_counter][freq_with_max_amp] > 1000:
-                            dictionary_set[dict_counter].pop(freq_with_max_amp)
-                            freq_with_max_amp = max(dictionary_set[dict_counter], key=dictionary_set[dict_counter].get)
-                        amp_list.append(dictionary_set[dict_counter][freq_with_max_amp])
-                        # print(amp_list)
-                        dict_counter += 1
 
-                        if dict_counter == 5:
+                        if dict_counter == 2:
                             print(amp_list)
 
-                            amplitudes = str(amp_list[0]) + ", " + str(amp_list[1]) + ", " + str(amp_list[2]) + ", " + str(amp_list[3]) + ", " + str(amp_list[4])
+                            amp_list[0] = amp_list[0] * 0.2
+                            amp_list[1] = amp_list[1] * 2.0 
+
+                            if amp_list[0] < 50:
+                                amp_list[0] += 100
+                            if amp_list[1] < 50:
+                                amp_list[1] += 200
+
+                            amplitudes = str(amp_list[0]) + "," + str(amp_list[1]) + "\0"
                             print(amplitudes)
                             arduino.write(amplitudes.encode())
 

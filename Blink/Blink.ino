@@ -1,21 +1,26 @@
 #include <Wire.h>
 #include <Adafruit_MotorShield.h>
 Adafruit_MotorShield AFMS = Adafruit_MotorShield(); 
-Adafruit_DCMotor *motor1 = AFMS.getMotor(1);
-Adafruit_DCMotor *motor2 = AFMS.getMotor(2);
+Adafruit_DCMotor *rightMotor = AFMS.getMotor(1); // Right Motor
+Adafruit_DCMotor *leftMotor = AFMS.getMotor(2); // Left Motor
 
 // initialize variable for determining whether to accept new data or not
 boolean newData = false;
 
-// first motor speed(default speed=100) | second motor speed(default speed=50)
-float ampVals[2] = {150, 150};
+// Override var - true when directly setting motor speeds, and not via PID
+boolean oride = false;
+
+// Motor Speed | Left sensor threshold | Right sensor threshold | Motor override (stop)
+int cvals[4] = {0,900,870,1};
+
+// first motor speed | second motor speed
+float ampVals[2] = {100, 50};
 
 // Serial Input Work
 const byte numChars = 32;
+char caseData = 'p';
 char inputData[numChars]; // an array to store the received data
 
-int motor1Speed;
-int motor2Speed;
 
 void setup() {
   AFMS.begin();
@@ -29,15 +34,6 @@ void loop() {
   recvWithEndMarker();
   parseNewData();
   printAmpVals();
-
-  motor1Speed = ampVals[0]; // 130 is the max for each channel
-  motor2Speed = ampVals[1];
-  Serial.println(motor1Speed);
-  Serial.println(motor2Speed);
-  motor1->setSpeed(motor1Speed);
-  motor2->setSpeed(motor2Speed);
-  motor1->run(FORWARD);
-  motor2->run(FORWARD);
 }
 
 
@@ -46,7 +42,7 @@ void loop() {
  */
 void recvWithEndMarker() {
   static byte ndx = 0;
-  char endMarker = '\0';
+  char endMarker = '\0 ';
   char rc;
   while (Serial.available() > 0 && newData == false) {
     rc = Serial.read();
@@ -62,12 +58,13 @@ void recvWithEndMarker() {
       inputData[ndx] = '\0'; // terminate the string
       ndx = 0;
       
-//      Serial.println("===InputData===");
-//      Serial.println(inputData);
-//      Serial.println("newdata");
+      Serial.println("===InputData===");
+      Serial.println(inputData);
+      Serial.println("newdata");
       
       newData = true;
     }
+//    Serial.println(inputData);
   }
 }
 
@@ -87,17 +84,18 @@ void parseNewData() {
       if (ampValNdx == 2) {
         ampValNdx = 0;
       }
-      
-//      Serial.print("Char Val: ");
-//      Serial.print(ptr);
-//      Serial.print("Float Val: ");
-//      Serial.print(amp);
-//      Serial.println("");
 
+      Serial.print("Char Val: ");
+      Serial.print(ptr);
+      Serial.print("Float Val: ");
+      Serial.print(amp);
+      Serial.println("");
+//      printf("'%s'\n", ptr);
+      
       ampVals[ampValNdx] = amp;
+      ampValNdx++;
       ptr = strtok(NULL, delim);
       amp = atof(ptr);
-      ampValNdx++;
     }
     newData = false;
   }
@@ -105,6 +103,6 @@ void parseNewData() {
 
 void printAmpVals() {
   for (int i = 0; i < 3; i++) {
-//    Serial.println(ampVals[i]);
+    Serial.println(ampVals[i]);
   }
 }

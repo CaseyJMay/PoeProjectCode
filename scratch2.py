@@ -76,7 +76,7 @@ def receive_fft_info():
                     print("==========================================")
                     data = arduino.readline().decode('utf-8').strip()
 
-                # print(data)
+                print("DATA: ", data)
                 freq_amp_pair = data.split(",")
                 freq = freq_amp_pair[0]
                 amp = freq_amp_pair[1]
@@ -85,7 +85,7 @@ def receive_fft_info():
                 dictionary_set[dict_counter][freq] = float(amp)
 
                 ## there are 64 freq,amp pairs each timestamp
-                ## the first four dictionaries contain 13 freq,amp pairs
+                ## the first two dictionaries contain 13 freq,amp pairs
                 if dict_counter < 3:
                     if len(dictionary_set[dict_counter]) == 32:
                         freq_with_max_amp = max(dictionary_set[dict_counter], key=dictionary_set[dict_counter].get)

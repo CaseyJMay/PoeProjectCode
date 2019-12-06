@@ -11,7 +11,6 @@ def receive_fft_info():
     dictionary_set = {}
 
     amp_list = []
-    dict_counter = 0
 
     ## first while loop is to catch the start of a timestamp 
     ## because the first freq,amp pair passed from Arduino varies depending on when this script is executed
@@ -45,7 +44,7 @@ def receive_fft_info():
                     print("==========================================")
                     data = arduino.readline().decode('utf-8').strip()
 
-                # print("DATA: ", data)
+                print("DATA: ", data)
                 freq_amp_pair = data.split(",")
                 freq = freq_amp_pair[0]
                 amp = freq_amp_pair[1]
@@ -55,31 +54,32 @@ def receive_fft_info():
 
                 ## there are 64 freq,amp pairs each timestamp
                 if len(dictionary_set) == 64:
+                    amp_counter = 0
+
+                    ## got rid of freq: 0.0 and 15.6 because their amp was absurdly big
                     del dictionary_set["0.0"]
                     del dictionary_set["15.6"]
+                    del dictionary_set["46.9"]
+                    del dictionary_set["62.5"]
+                    del dictionary_set["78.1"]
 
-                    freq_with_max_amp = max(dictionary_set, key=dictionary_set.get)
-                    amp_list.append(dictionary_set[freq_with_max_amp])
-
-                    dictionary_set.pop(freq_with_max_amp)
-                    freq_with_max_amp = max(dictionary_set, key=dictionary_set.get)
-                    amp_list.append(dictionary_set[freq_with_max_amp])
-
+                    ## find three freq w/ max amp
+                    while amp_counter < 3:
+                        freq_with_max_amp = max(dictionary_set, key=dictionary_set.get)
+                        amp_list.append(dictionary_set[freq_with_max_amp])
+                        dictionary_set.pop(freq_with_max_amp)
+                        amp_counter += 1
                     print(amp_list)
 
-                    amp_list[0] = amp_list[0] * 0.6
-                    amp_list[1] = amp_list[1] * 0.6 
+                    ## scale the amplitudes since they are big -> TODO: scale them only if they are bigger than a threshold?
+                    amp_list[0] = round(amp_list[0] * 0.3)
+                    amp_list[1] = round(amp_list[1] * 0.3) 
+                    amp_list[2] = round(amp_list[2] * 0.3) 
 
-                    # if amp_list[0] > 2000:
-                    #     amp_list[0] * 0.3
-                    # if amp_list[1] > 2000:
-                    #     amp_list[1] * 0.3
-
-                    amplitudes = str(amp_list[0]) + "," + str(amp_list[1]) + "\0"
+                    amplitudes = str(amp_list[0]) + "," + str(amp_list[1]) + "," + str(amp_list[2]) + "\0"
                     print(amplitudes)
                     arduino.write(amplitudes.encode())
 
-                    dict_counter = 0
                     dictionary_set.clear()
                     amp_list.clear()
                 

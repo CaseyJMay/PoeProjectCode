@@ -8,21 +8,21 @@
 Adafruit_MotorShield AFMS = Adafruit_MotorShield(); 
 Adafruit_DCMotor *motor1 = AFMS.getMotor(1);
 Adafruit_DCMotor *motor2 = AFMS.getMotor(2);
+Adafruit_DCMotor *motor3 = AFMS.getMotor(3);
 
 arduinoFFT FFT = arduinoFFT();
 
 // initialize variable for determining whether to accept new data or not
 boolean newData = false;
 // first motor speed(default speed = 100) | second motor speed(default speed = 50)
-float ampVals[2] = {200, 200};
+float ampVals[3] = {200, 200, 200};
 // Serial Input Work
 const byte numChars = 32;
 char inputData[numChars]; // an array to store the received data
 
 float motor1Speed;
-float prevMotor1Speed = 0;
 float motor2Speed;
-float prevMotor2Speed = 0;
+float motor3Speed;
 
 unsigned int sampling_period_us;
 unsigned long microseconds;
@@ -72,16 +72,17 @@ void loop() {
 //    while(1);       //Run code once
     recvWithEndMarker();
     parseNewData();
-
+    
     motor1Speed = ampVals[0];
     motor2Speed = ampVals[1];
+    motor3Speed = ampVals[2];
     motor1->setSpeed(motor1Speed);
     motor2->setSpeed(motor2Speed);
+    motor3->setSpeed(motor3Speed);
     motor1->run(FORWARD);
     motor2->run(FORWARD);
+    motor3->run(FORWARD);
     delay(100);
-//    prevMotor1Speed = motor1Speed;
-//    prevMotor2Speed = motor2Speed;
 }
 
 

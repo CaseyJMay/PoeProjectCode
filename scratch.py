@@ -93,12 +93,17 @@
 
 # receive_fft_info()
 
-dictionary_set = [{"a":"40", "b":"20", "c":"30"},{}]
-del dictionary_set[0]["a"]
-max_val = max(dictionary_set[0], key=dictionary_set[0].get)
-print(dictionary_set[0][max_val])
-print(max_val)
+# dictionary_set = [{"a":"40", "b":"20", "c":"30"},{}]
+# del dictionary_set[0]["a"]
+# max_val = max(dictionary_set[0], key=dictionary_set[0].get)
+# print(dictionary_set[0][max_val])
+# print(max_val)
 
-del dictionary_set[0][max_val]
-max_val = max(dictionary_set[0], key=dictionary_set[0].get)
-print(dictionary_set[0][max_val])
+# del dictionary_set[0][max_val]
+# max_val = max(dictionary_set[0], key=dictionary_set[0].get)
+# print(dictionary_set[0][max_val])
+if not "a".isdigit():
+    print("UH")
+else:
+    print("EH")
+# print("a".isdigit())

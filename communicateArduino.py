@@ -7,16 +7,16 @@ def start_serial(com,baud):
     return serialPort
 
 def control_motor():
-    arduino = start_serial("COM5", 9600)
+    arduino = start_serial("COM5", 115200)
 
     while True:
         # print("---")
         # data = arduino.readline().decode().strip("\r\n")
-        data = arduino.readline().decode().strip("\r\n")
-        # print(data)
-        print("Enter: ")
-        var = input()
+        data = arduino.readline().decode('utf-8').strip("\r\n")
         print(data)
+        # print("Enter: ")
+        # var = input()
+        # print(data)
         # arduino.write("h".encode())
 
 
@@ -29,7 +29,7 @@ def control_motor():
             #     arduino.write(string.encode())
 
         # string = "1.1,2.2\0"
-        arduino.write(var.encode())
+        # arduino.write(var.encode())
         # string = "3,4\0"
         # arduino.write(string.encode())
 

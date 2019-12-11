@@ -111,63 +111,63 @@ void setup() {
    
   sampling_period_us = round(1000000*(1.0/SAMPLING_FREQUENCY));
 }
- 
+
 void loop() {
+  /*SAMPLING*/
+  for(int i=0; i<SAMPLES; i++)
+  {
+      microseconds = micros();    //Overflows after around 70 minutes!
    
-    /*SAMPLING*/
-    for(int i=0; i<SAMPLES; i++)
-    {
-        microseconds = micros();    //Overflows after around 70 minutes!
-     
-        vReal[i] = analogRead(A3);
-        vImag[i] = 0;
-     
-        while(micros() < (microseconds + sampling_period_us)){
-        }
-    }
- 
-    /*FFT*/
-    FFT.Windowing(vReal, SAMPLES, FFT_WIN_TYP_HAMMING, FFT_FORWARD);
-    FFT.Compute(vReal, vImag, SAMPLES, FFT_FORWARD);
-    FFT.ComplexToMagnitude(vReal, vImag, SAMPLES);
-    double peak = FFT.MajorPeak(vReal, SAMPLES, SAMPLING_FREQUENCY);
- 
-    /*PRINT RESULTS*/
+      vReal[i] = analogRead(A3);
+      vImag[i] = 0;
+   
+      while(micros() < (microseconds + sampling_period_us)){
+      }
+  }
+
+  /*FFT*/
+  FFT.Windowing(vReal, SAMPLES, FFT_WIN_TYP_HAMMING, FFT_FORWARD);
+  FFT.Compute(vReal, vImag, SAMPLES, FFT_FORWARD);
+  FFT.ComplexToMagnitude(vReal, vImag, SAMPLES);
+  double peak = FFT.MajorPeak(vReal, SAMPLES, SAMPLING_FREQUENCY);
+
+  /*PRINT RESULTS*/
 //    Serial.println(peak);     //Print out what frequency is the most dominant.
 //    Serial.println("---");
-    for(int i=0; i<(SAMPLES/2); i++)
-    {
-        /*View all these three lines in serial terminal to see which frequencies has which amplitudes*/
-        Serial.print((i * 1.0 * SAMPLING_FREQUENCY) / SAMPLES, 1);
-        Serial.print(",");
-        Serial.println(vReal[i], 1);    //View only this line in serial plotter to visualize the bins
-    }
- 
-    delay(1000);  //Repeat the process every second OR:
+  for(int i=0; i<(SAMPLES/2); i++)
+  {
+      /*View all these three lines in serial terminal to see which frequencies has which amplitudes*/
+      Serial.print((i * 1.0 * SAMPLING_FREQUENCY) / SAMPLES, 1);
+      Serial.print(",");
+      Serial.println(vReal[i], 1);    //View only this line in serial plotter to visualize the bins
+  }
+
+  delay(1000);  //Repeat the process every second OR:
 //    while(1);       //Run code once
-    recvWithEndMarker();
-    parseNewData();
+  recvWithEndMarker();
+  parseNewData();
 
-//    ardprintf("Motor speeds: %f, %f, %f, %f, %f", ampVals[0], ampVals[1], ampVals[2], ampVals[3], ampVals[4]);
-    
-    motor1Speed = ampVals[0];
-    motor2Speed = ampVals[1];
-    motor3Speed = ampVals[2];
-    motor4Speed = ampVals[3];
-    motor5Speed = ampVals[4];
-    motor1->setSpeed(motor1Speed);
-    motor2->setSpeed(motor2Speed);
-    motor3->setSpeed(motor3Speed);
-    motor4->setSpeed(motor4Speed);
-    motor5->setSpeed(motor5Speed);
-    motor1->run(FORWARD);
-    motor2->run(FORWARD);
-    motor3->run(FORWARD);
-    motor4->run(FORWARD);
-    motor5->run(FORWARD);
-//    delay(100);
+  ardprintf("Motor speeds: %f, %f, %f, %f, %f", ampVals[0], ampVals[1], ampVals[2], ampVals[3], ampVals[4]);
+
+  // put your main code here, to run repeatedly:
+  motor1Speed = ampVals[0];
+  motor2Speed = ampVals[1];
+  motor3Speed = ampVals[2];
+  motor4Speed = ampVals[3];
+  motor5Speed = ampVals[4];
+  motor1->setSpeed(motor1Speed);
+  motor2->setSpeed(motor2Speed);
+  motor3->setSpeed(motor3Speed);
+  motor4->setSpeed(motor4Speed);
+  motor5->setSpeed(motor5Speed);
+  motor1->run(FORWARD);
+  motor2->run(FORWARD);
+  motor3->run(FORWARD);
+  motor4->run(FORWARD);
+  motor5->run(FORWARD);
+//  delay(100);
+
 }
-
 
 /*
  * read all the data from serial input until a new line appears

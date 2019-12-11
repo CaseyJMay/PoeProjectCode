@@ -43,6 +43,10 @@ def receive_fft_info():
                 if len(freq_amp_pair) == 1:
                     print("==========================================")
                     data = arduino.readline().decode('utf-8').strip()
+                
+                # if not data.isdigit():
+                #     print("DATA: ", data)
+                #     data = arduino.readline().decode('utf-8').strip()
 
                 print("DATA: ", data)
                 freq_amp_pair = data.split(",")
@@ -59,12 +63,12 @@ def receive_fft_info():
                     ## got rid of freq: 0.0 and 15.6 because their amp was absurdly big
                     del dictionary_set["0.0"]
                     del dictionary_set["15.6"]
-                    del dictionary_set["46.9"]
-                    del dictionary_set["62.5"]
-                    del dictionary_set["78.1"]
+                    # del dictionary_set["46.9"]
+                    # del dictionary_set["62.5"]
+                    # del dictionary_set["78.1"]
 
                     ## find three freq w/ max amp
-                    while amp_counter < 3:
+                    while amp_counter < 5:
                         freq_with_max_amp = max(dictionary_set, key=dictionary_set.get)
                         amp_list.append(dictionary_set[freq_with_max_amp])
                         dictionary_set.pop(freq_with_max_amp)
@@ -72,11 +76,13 @@ def receive_fft_info():
                     print(amp_list)
 
                     ## scale the amplitudes since they are big -> TODO: scale them only if they are bigger than a threshold?
-                    amp_list[0] = round(amp_list[0] * 0.3)
-                    amp_list[1] = round(amp_list[1] * 0.3) 
-                    amp_list[2] = round(amp_list[2] * 0.3) 
+                    amp_list[0] = round(amp_list[0] * 5.0)
+                    amp_list[1] = round(amp_list[1] * 5.0) 
+                    amp_list[2] = round(amp_list[2] * 5.0) 
+                    amp_list[3] = round(amp_list[3] * 5.0) 
+                    amp_list[4] = round(amp_list[4] * 5.0) 
 
-                    amplitudes = str(amp_list[0]) + "," + str(amp_list[1]) + "," + str(amp_list[2]) + "\0"
+                    amplitudes = str(amp_list[0]) + "," + str(amp_list[1]) + "," + str(amp_list[2]) + "," + str(amp_list[3]) + "," + str(amp_list[4]) + "\0"
                     print(amplitudes)
                     arduino.write(amplitudes.encode())
 
